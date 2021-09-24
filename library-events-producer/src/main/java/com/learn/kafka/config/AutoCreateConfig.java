@@ -7,13 +7,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
-@Profile("!dev")
+@Profile("local")
 public class AutoCreateConfig {
     @Bean
     public NewTopic libraryEvents(){
         return TopicBuilder.name("library-events")
                             .partitions(3)
-                            .replicas(3)
+                            .replicas(1)
                             .build();
     }
 }
