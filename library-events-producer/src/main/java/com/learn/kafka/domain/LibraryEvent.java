@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Builder
 public class LibraryEvent {
-    private LibraryEventType libraryEventType;
     private Integer libraryEventId;
+    private LibraryEventType libraryEventType;
     private Book book;
 }

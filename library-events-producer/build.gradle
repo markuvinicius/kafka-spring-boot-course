@@ -28,6 +28,7 @@ dependencies {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
 	}
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	implementation 'com.github.mvallim:java-fluent-validator:1.7.5'
 }
 
 sourceSets{
