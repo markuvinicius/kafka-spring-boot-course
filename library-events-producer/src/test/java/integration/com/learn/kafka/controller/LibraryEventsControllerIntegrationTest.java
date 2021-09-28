@@ -63,13 +63,14 @@ public class LibraryEventsControllerIntegrationTest {
 
         //GIVEN
         Book book = Book.builder()
+                            .bookId(123)
                             .bookAuthor("Marku Vinicius")
                             .bookName("Kafka Spring Boot")
                             .build();
 
         LibraryEvent libraryEvent = LibraryEvent.builder()
                                         .libraryEventType(LibraryEventType.NEW)
-                                        .libraryEventId(null)
+                                        //.libraryEventId(null)
                                         .book(book)
                                         .build();
 
@@ -85,6 +86,39 @@ public class LibraryEventsControllerIntegrationTest {
 
         //THEN
         assertEquals(HttpStatus.CREATED,responseEntity.getStatusCode());
+        ConsumerRecord<Integer, String> consumerRecord = KafkaTestUtils.getSingleRecord(consumer, "library-events");
+        LibraryEvent value = objectMapper.readValue( consumerRecord.value(), LibraryEvent.class );
+
+        assertEquals( value , libraryEvent );
+    }
+
+    @Test
+    @Timeout(5)
+    public void putLibraryEvent() throws JsonProcessingException, InterruptedException {
+
+        //GIVEN
+        Book book = Book.builder()
+                .bookId(123)
+                .bookAuthor("Marku Vinicius")
+                .bookName("Kafka Spring Boot")
+                .build();
+
+        LibraryEvent libraryEvent = LibraryEvent.builder()
+                .libraryEventType(LibraryEventType.UPDATE)
+                .libraryEventId(1234)
+                .book(book)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("content-type", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<LibraryEvent> requestBody = new HttpEntity<>(libraryEvent,headers);
+
+        //WHEN
+        ResponseEntity<LibraryEvent> responseEntity = testRestTemplate.exchange(postEndPoint,
+                HttpMethod.PUT, requestBody, LibraryEvent.class);
+
+        //THEN
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
         ConsumerRecord<Integer, String> consumerRecord = KafkaTestUtils.getSingleRecord(consumer, "library-events");
         LibraryEvent value = objectMapper.readValue( consumerRecord.value(), LibraryEvent.class );
 
